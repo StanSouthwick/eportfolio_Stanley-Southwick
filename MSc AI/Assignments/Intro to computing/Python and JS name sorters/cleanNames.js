@@ -1,9 +1,8 @@
 // cleanNames.js
 
-// Function to process a list of names: remove duplicates, sort alphabetically, and convert to uppercase
 function processNames(names) {
-    let namesNew = names.map((name) => name.toUpperCase()); // Convert all names to uppercase for consistency
-    let uniqueNames = [...new Set(namesNew)]; // removes duplicates
+    names = names.map((name) => name.toUpperCase()); // Convert all names to uppercase for consistency
+    let uniqueNames = [...new Set(names)]; // removes duplicates
     uniqueNames.sort(); // sorts alphabetically
     return uniqueNames;
 }
