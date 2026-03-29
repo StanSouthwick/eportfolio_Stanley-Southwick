@@ -2839,11 +2839,11 @@ input, select, textarea {
 			}
 
 			.tiles article:nth-child(6n - 3):before {
-				background-color: #ec8d81;
+				background-color: #2e86c1;
 			}
 
 			.tiles article:nth-child(6n - 2):before {
-				background-color: #e7b788;
+				background-color: #1a5276;
 			}
 
 			.tiles article:nth-child(6n - 1):before {
@@ -3267,11 +3267,11 @@ input, select, textarea {
 			}
 
 			#header.alt.style3 .logo strong {
-				color: #ec8d81;
+				color: #2e86c1;
 			}
 
 			#header.alt.style4 .logo strong {
-				color: #e7b788;
+				color: #1a5276;
 			}
 
 			#header.alt.style5 .logo strong {
@@ -3499,11 +3499,11 @@ input, select, textarea {
 		}
 
 		#banner.style3:after {
-			background-color: #ec8d81;
+			background-color: #2e86c1;
 		}
 
 		#banner.style4:after {
-			background-color: #e7b788;
+			background-color: #1a5276;
 		}
 
 		#banner.style5:after {
