@@ -149,8 +149,7 @@
                     <p>This section is a placeholder. Tell your story here — your academic background,
                        what drives you, the technologies you work with, and where you're headed.</p>
                     <ul class="actions">
-                        <!-- TODO: Link this to your CV/resume if you have one online, or remove it -->
-                        <li><a href="#" class="button next">Download CV</a></li>
+                            <li><a href="professional_documents/Stanley_Southwick-CV.docx" download="Stanley_Southwick-CV.docx" class="button next">Download CV</a></li>
                     </ul>
                 </div>
             </section>
@@ -164,8 +163,7 @@
                     <header class="major">
                         <h2 id="contact-heading">Get In Touch</h2>
                     </header>
-                    <!-- TODO: Hook this form up to a service like Formspree (formspree.io) to receive emails -->
-                    <form method="post" action="#" aria-label="Contact form">
+                    <form id="contact-form" aria-label="Contact form" novalidate>
                         <div class="fields">
                             <div class="field half">
                                 <label for="name">Name</label>
@@ -191,7 +189,6 @@
                         <div class="contact-method">
                             <span class="icon solid alt fa-envelope" aria-hidden="true"></span>
                             <h3>Email</h3>
-                            <!-- TODO: Replace with your actual email address -->
                             <a href="mailto:stanjsouthwick@gmail.com">stanjsouthwick@gmail.com</a>
                         </div>
                     </section>
@@ -231,6 +228,23 @@
         </footer>
 
     </div>
+
+    <!-- Contact form: opens visitor's email client pre-filled with their message -->
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name    = document.getElementById('name').value.trim();
+            var email   = document.getElementById('email').value.trim();
+            var message = document.getElementById('message').value.trim();
+            if (!name || !email || !message) {
+                alert('Please fill in all fields before sending.');
+                return;
+            }
+            var subject  = encodeURIComponent('Portfolio enquiry from ' + name);
+            var body     = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message);
+            window.location.href = 'mailto:stanjsouthwick@gmail.com?subject=' + subject + '&body=' + body;
+        });
+    </script>
 
     <!-- Scripts -->
     <script src="assets/js/jquery.min.js"></script>
