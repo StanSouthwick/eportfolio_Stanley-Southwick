@@ -3,3 +3,7 @@ This website is to showcase my current MSc AI studies, projects (production styl
 The aim for this is to give a accessible demonstatrion of my skills to tansition from and Military cyber/ networkign operational engineer to a machine learning engineer.
 
 ## Whats inlcuded?
+
+
+## Link
+https://stansouthwick.github.io/eportfolio_Stanley-Southwick/
