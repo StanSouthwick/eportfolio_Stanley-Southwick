@@ -300,6 +300,36 @@ section { padding: 6rem 0; }
 .project-links { display: flex; flex-direction: column; gap: 0.65rem; }
 .project-links .btn { justify-content: center; width: 100%; }
 
+/* === Achievement cards (project-6) === */
+.achievements-intro { margin-bottom: 3rem; }
+.achievements-intro p { color: var(--text-muted); font-size: 1rem; line-height: 1.85; }
+.achievements-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.achievement-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden; transition: all 0.3s var(--ease);
+  backdrop-filter: blur(8px); position: relative;
+}
+.achievement-card:hover { border-color: var(--border-hover); transform: translateY(-4px); box-shadow: var(--shadow-blue); }
+.achievement-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--accent)); opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.achievement-card:hover::before { opacity: 1; }
+.achievement-card__img-wrap { overflow: hidden; }
+.achievement-card__img {
+  width: 100%; height: 240px; object-fit: cover;
+  transition: transform 0.5s var(--ease); display: block;
+}
+.achievement-card:hover .achievement-card__img { transform: scale(1.04); }
+.achievement-card__body { padding: 1.5rem; }
+.achievement-card__title {
+  font-size: 1.05rem; font-weight: 700; color: var(--text);
+  margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.6rem;
+}
+.achievement-card__title i { color: var(--blue-bright); font-size: 0.95rem; flex-shrink: 0; }
+.achievement-card__desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.8; }
+
 /* === Responsive === */
 @media (max-width: 900px) {
   .about__grid, .contact__grid, .project-body__grid { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -309,6 +339,7 @@ section { padding: 6rem 0; }
   .nav__links, .nav__actions { display: none; }
   .nav__hamburger { display: flex; }
   .projects__grid { grid-template-columns: 1fr; }
+  .achievements-grid { grid-template-columns: 1fr; }
   .form__row { grid-template-columns: 1fr; }
   section { padding: 4rem 0; }
   .footer__inner { flex-direction: column; text-align: center; }
