@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Personal Achievements — Stanley Southwick E-Portfolio. Marathons, mountain summits, and military commendations." />
+  <title>Personal Achievements | Stanley Southwick</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+  <link rel="stylesheet" href="assets/css/portfolio.css" />
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">Stanley<span>.</span></a>
+      <ul class="nav__links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#projects" class="active">Projects</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <a href="professional_documents/Stanley_Southwick-CV.docx" download class="btn btn-outline btn-sm">
+          <i class="fas fa-download" aria-hidden="true"></i> CV
+        </a>
+      </div>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="nav__mobile" id="mobileMenu" role="dialog" aria-label="Mobile navigation" aria-modal="true">
+    <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu"><i class="fas fa-times"></i></button>
+    <a href="index.html#about"    onclick="closeMobile()">About</a>
+    <a href="index.html#projects" onclick="closeMobile()">Projects</a>
+    <a href="index.html#contact"  onclick="closeMobile()">Contact</a>
+    <a href="professional_documents/Stanley_Southwick-CV.docx" download class="btn btn-primary" onclick="closeMobile()">
+      <i class="fas fa-download"></i> Download CV
+    </a>
+  </div>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="project-hero" aria-labelledby="project-title">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          <a href="index.html#projects">Projects</a>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          <span>Personal Achievements</span>
+        </nav>
+        <p class="project-hero__num">Personal Highlights</p>
+        <h1 class="project-hero__title" id="project-title">Personal Achievements</h1>
+        <p class="project-hero__desc">A record of physical and professional milestones — the challenges I've taken on outside of the classroom and the office, and what they've taught me.</p>
+      </div>
+    </section>
+
+    <!-- Achievements body -->
+    <section class="project-body">
+      <div class="container">
+
+        <div class="achievements-intro fade-up">
+          <p>
+            These achievements sit alongside my academic and technical work. They reflect the same qualities I bring to every project:
+            consistency under pressure, the ability to push through when things get hard, and a habit of setting ambitious targets and following through.
+          </p>
+        </div>
+
+        <!-- TODO: Upload your 4 photos and name them as follows:
+             images/achievement-marathon.jpg
+             images/achievement-3peaks.jpg
+             images/achievement-kilimanjaro.jpg
+             images/achievement-commendation.jpg
+             Then remove the src placeholders below. -->
+        <div class="achievements-grid">
+
+          <!-- 1. Manchester Marathon x2 -->
+          <article class="achievement-card fade-up">
+            <div class="achievement-card__img-wrap">
+              <img
+                class="achievement-card__img"
+                src="images/pic06.jpg"
+                alt="Manchester Marathon — Stanley Southwick crossing the finish line"
+              />
+              <!-- TODO: Replace src with images/achievement-marathon.jpg once uploaded -->
+            </div>
+            <div class="achievement-card__body">
+              <h2 class="achievement-card__title">
+                <i class="fas fa-running" aria-hidden="true"></i>
+                2&times; Manchester Marathon
+              </h2>
+              <p class="achievement-card__desc">
+                Completed the Manchester Marathon twice — 26.2 miles each time through the streets of the city.
+                Running a full marathon once proves you can do it; running it again proves it wasn't a fluke.
+                Both finishes were the result of months of structured training alongside a demanding workload,
+                and each race reinforced that endurance is as much a mental discipline as a physical one.
+              </p>
+            </div>
+          </article>
+
+          <!-- 2. UK National 3 Peaks -->
+          <article class="achievement-card fade-up">
+            <div class="achievement-card__img-wrap">
+              <img
+                class="achievement-card__img"
+                src="images/pic07.jpg"
+                alt="UK National Three Peaks Challenge — summit view"
+              />
+              <!-- TODO: Replace src with images/achievement-3peaks.jpg once uploaded -->
+            </div>
+            <div class="achievement-card__body">
+              <h2 class="achievement-card__title">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                UK National 3 Peaks &mdash; Under 24 Hours
+              </h2>
+              <p class="achievement-card__desc">
+                Summited Ben Nevis (Scotland), Scafell Pike (England), and Snowdon (Wales) — the three highest peaks
+                in the UK — within a single 24-hour window. The challenge demands precise time management, rapid
+                transitions between driving and climbing, and the ability to keep moving when fatigue sets in.
+                Completing it sub-24 hours leaves no margin for error.
+              </p>
+            </div>
+          </article>
+
+          <!-- 3. Kilimanjaro -->
+          <article class="achievement-card fade-up">
+            <div class="achievement-card__img-wrap">
+              <img
+                class="achievement-card__img"
+                src="images/pic08.jpg"
+                alt="Kilimanjaro summit — Uhuru Peak at 5,895 m"
+              />
+              <!-- TODO: Replace src with images/achievement-kilimanjaro.jpg once uploaded -->
+            </div>
+            <div class="achievement-card__body">
+              <h2 class="achievement-card__title">
+                <i class="fas fa-globe-africa" aria-hidden="true"></i>
+                Kilimanjaro — Uhuru Peak (5,895 m)
+              </h2>
+              <p class="achievement-card__desc">
+                Reached the summit of Mount Kilimanjaro — Africa's highest mountain and the world's tallest
+                free-standing peak — at 5,895 metres above sea level. The multi-day ascent required careful
+                acclimatisation, pacing, and the mental resolve to keep going through altitude sickness, extreme
+                cold, and sleep deprivation in the final push to Uhuru Peak.
+              </p>
+            </div>
+          </article>
+
+          <!-- 4. Commendation Award -->
+          <article class="achievement-card fade-up">
+            <div class="achievement-card__img-wrap">
+              <img
+                class="achievement-card__img"
+                src="images/pic09.jpg"
+                alt="Commendation Award for Overseas Deployments"
+              />
+              <!-- TODO: Replace src with images/achievement-commendation.jpg once uploaded -->
+            </div>
+            <div class="achievement-card__body">
+              <h2 class="achievement-card__title">
+                <i class="fas fa-medal" aria-hidden="true"></i>
+                Commendation Award — Overseas Deployments
+              </h2>
+              <p class="achievement-card__desc">
+                Formally recognised by the British Armed Forces for outstanding performance during overseas
+                deployments. The commendation was awarded for sustained professionalism, technical contribution,
+                and going consistently beyond the expected standard in demanding operational environments.
+                It reflects the same commitment I carry into every role I take on.
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <p class="footer__copy">&copy; 2025 Stanley Southwick</p>
+      <div class="footer__socials">
+        <a href="https://github.com/StanSouthwick" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/stanley-southwick" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="mailto:stanjsouthwick@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-top" id="backTop" aria-label="Back to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+      document.getElementById('backTop').classList.toggle('visible', window.scrollY > 400);
+    });
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const fadeObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => fadeObs.observe(el));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => { mobileMenu.classList.add('open'); hamburger.setAttribute('aria-expanded','true'); });
+    function closeMobile() { mobileMenu.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); }
+    document.getElementById('mobileClose').addEventListener('click', closeMobile);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobile(); });
+    document.getElementById('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>
