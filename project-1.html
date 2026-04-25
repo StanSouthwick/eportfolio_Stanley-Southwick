@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Project 1 — Stanley Southwick E-Portfolio" />
-  <!-- TODO: Update the title with your actual project name -->
-  <title>Project 1 | Stanley Southwick</title>
+  <meta name="description" content="Network Anomaly Detection — a two-tiered ensemble ML pipeline that flags and categorises malicious network traffic. Stanley Southwick E-Portfolio." />
+  <title>Network Anomaly Detection | Stanley Southwick</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -57,14 +56,11 @@
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
           <a href="index.html#projects">Projects</a>
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
-          <!-- TODO: Replace with your project name -->
-          <span>Project 1</span>
+          <span>Network Anomaly Detection</span>
         </nav>
         <p class="project-hero__num">Project 01</p>
-        <!-- TODO: Replace with your actual project name -->
-        <h1 class="project-hero__title" id="project-title">Project 1</h1>
-        <!-- TODO: One-line tagline for this project -->
-        <p class="project-hero__desc">A short, punchy description of what this project does and the problem it solves.</p>
+        <h1 class="project-hero__title" id="project-title">Network Anomaly Detection</h1>
+        <p class="project-hero__desc">An end-to-end production-style ML pipeline that detects and categorises malicious network traffic using a two-tiered ensemble model.</p>
       </div>
     </section>
 
@@ -75,29 +71,52 @@
 
           <!-- Main content -->
           <div>
-            <!-- TODO: Replace with a screenshot or banner image for this project -->
-            <img class="project-body__img" src="images/pic01.jpg" alt="Screenshot of Project 1" />
+            <!-- TODO: Replace with a screenshot or diagram of your pipeline -->
+            <img class="project-body__img" src="images/pic01.jpg" alt="Network Anomaly Detection pipeline diagram" />
 
             <div class="content-block fade-up">
               <h2>Overview</h2>
-              <!-- TODO: Describe what this project is, why you built it, and what it achieves -->
-              <p>This section is a placeholder. Describe your project here — what it is, why you built it, and what it achieves. Be specific: mention the dataset, the model, the tool, or the problem domain.</p>
+              <p>
+                This is an end-to-end production-style machine learning pipeline designed to detect and classify
+                malicious network traffic. The system is built around a two-tiered ensemble model architecture:
+                the first tier flags whether a given network flow is anomalous, and the second tier categorises
+                the nature of the attack (e.g. DDoS, port scan, brute force).
+              </p>
+              <!-- TODO: Expand this with more detail — dataset used, scale, deployment context -->
+              <p>
+                The pipeline covers the full ML lifecycle from raw packet data through feature engineering,
+                model training, evaluation, and a production-ready inference interface.
+              </p>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Architecture</h2>
+              <ul>
+                <li><strong>Tier 1 — Anomaly Detection:</strong> Ensemble classifier distinguishes normal traffic from anomalous flows using binary classification.</li>
+                <li><strong>Tier 2 — Attack Categorisation:</strong> Flagged traffic is passed to a multi-class ensemble model that identifies the specific attack category.</li>
+                <li><strong>Production pipeline:</strong> End-to-end design with preprocessing, feature engineering, model serialisation, and an inference layer.</li>
+                <!-- TODO: Add more specifics — model types used (e.g. Random Forest, XGBoost), accuracy metrics, dataset name -->
+              </ul>
             </div>
 
             <div class="content-block fade-up">
               <h2>Key Features</h2>
-              <!-- TODO: Replace with real features/achievements -->
               <ul>
-                <li>Feature or achievement 1 — be specific about what it does</li>
-                <li>Feature or achievement 2 — metrics, accuracy, or scale if relevant</li>
-                <li>Feature or achievement 3 — design decisions you made</li>
+                <li>Two-tiered ensemble approach separates detection from classification for improved accuracy and interpretability.</li>
+                <li>Production-style codebase with modular components for preprocessing, training, and inference.</li>
+                <!-- TODO: Add metrics — e.g. "Achieved X% accuracy on the Y dataset" -->
+                <li><!-- TODO: Add a third highlight — e.g. dataset size, false positive rate, inference speed --></li>
               </ul>
             </div>
 
             <div class="content-block fade-up">
               <h2>What I Learned</h2>
-              <!-- TODO: Reflect on skills gained, challenges overcome, lessons learned -->
-              <p>This section is a placeholder. Reflect on the skills you developed, challenges you overcame, and lessons learned. This is often the most interesting part for readers — be honest about what was hard.</p>
+              <!-- TODO: Reflect on what this project taught you -->
+              <p>
+                Building this project reinforced how real-world ML differs from academic exercises — data quality,
+                class imbalance in network datasets, and the challenge of keeping false positive rates low in a
+                security context all required careful thought. Add your own reflections here.
+              </p>
             </div>
           </div>
 
@@ -105,12 +124,14 @@
           <aside class="project-sidebar" aria-label="Project details">
             <div class="sidebar-card">
               <h3>Tech Stack</h3>
-              <!-- TODO: Replace with the actual technologies you used -->
               <div class="tags">
                 <span class="tag">Python</span>
-                <span class="tag">Technology 2</span>
-                <span class="tag">Library 3</span>
-                <span class="tag">Tool 4</span>
+                <span class="tag">Scikit-learn</span>
+                <span class="tag">Ensemble Models</span>
+                <span class="tag">Pandas</span>
+                <span class="tag">NumPy</span>
+                <span class="tag">Cyber Security</span>
+                <!-- TODO: Add any other libraries or tools you used -->
               </div>
             </div>
 
@@ -130,8 +151,7 @@
 
             <div class="sidebar-card">
               <h3>Status</h3>
-              <!-- TODO: Change badge-soon to badge-live when the project is complete -->
-              <span class="badge badge-soon">Coming soon</span>
+              <span class="badge badge-live">Live</span>
             </div>
           </aside>
 
