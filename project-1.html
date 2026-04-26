@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Network Anomaly Detection — a two-tiered ensemble ML pipeline that flags and categorises malicious network traffic. Stanley Southwick E-Portfolio." />
+  <meta name="description" content="Network Anomaly Detection — production-grade ML pipeline trained on 2.83M CICIDS2017 flows, containerised FastAPI inference on AWS ECS Fargate with CI/CD and drift monitoring. Stanley Southwick E-Portfolio." />
   <title>Network Anomaly Detection | Stanley Southwick</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -60,7 +60,7 @@
         </nav>
         <p class="project-hero__num">Project 01</p>
         <h1 class="project-hero__title" id="project-title">Network Anomaly Detection</h1>
-        <p class="project-hero__desc">An end-to-end production-style ML pipeline that detects and categorises malicious network traffic using a two-tiered ensemble model.</p>
+        <p class="project-hero__desc">Production-grade ML pipeline for network intrusion detection — trained on 2.83M labelled flows, containerised FastAPI inference deployed on AWS ECS Fargate, with automated CI/CD and runtime drift monitoring.</p>
       </div>
     </section>
 
@@ -71,53 +71,310 @@
 
           <!-- Main content -->
           <div>
-            <!-- TODO: Replace with a screenshot or diagram of your pipeline -->
             <img class="project-body__img" src="images/pic01.jpg" alt="Network Anomaly Detection pipeline diagram" />
 
             <div class="content-block fade-up">
               <h2>Overview</h2>
               <p>
-                This is an end-to-end production-style machine learning pipeline designed to detect and classify
-                malicious network traffic. The system is built around a two-tiered ensemble model architecture:
-                the first tier flags whether a given network flow is anomalous, and the second tier categorises
-                the nature of the attack (e.g. DDoS, port scan, brute force).
+                This project demonstrates the full ML engineering lifecycle — from raw data exploration through to a
+                containerised, cloud-deployed inference API with automated redeployment and runtime monitoring.
+                It was built as a portfolio piece targeting ML engineering roles in the defence and security sector.
               </p>
-              <!-- TODO: Expand this with more detail — dataset used, scale, deployment context -->
-              <p>
-                The pipeline covers the full ML lifecycle from raw packet data through feature engineering,
-                model training, evaluation, and a production-ready inference interface.
+              <p style="margin-top:1rem;">
+                The dataset is <strong style="color:var(--text)">CICIDS2017</strong> (Canadian Institute for Cybersecurity),
+                comprising <strong style="color:var(--text)">2.83 million labelled network flows</strong> across 15 traffic classes —
+                including DoS, DDoS, PortScan, Brute Force, Web Attacks, and Infiltration.
+                Raw CSVs are preprocessed down from 79 features to 48 by dropping zero-variance, duplicate, and
+                high-correlation columns, producing a deterministic, reproducible feature set.
               </p>
             </div>
 
             <div class="content-block fade-up">
               <h2>Architecture</h2>
               <ul>
-                <li><strong>Tier 1 — Anomaly Detection:</strong> Ensemble classifier distinguishes normal traffic from anomalous flows using binary classification.</li>
-                <li><strong>Tier 2 — Attack Categorisation:</strong> Flagged traffic is passed to a multi-class ensemble model that identifies the specific attack category.</li>
-                <li><strong>Production pipeline:</strong> End-to-end design with preprocessing, feature engineering, model serialisation, and an inference layer.</li>
-                <!-- TODO: Add more specifics — model types used (e.g. Random Forest, XGBoost), accuracy metrics, dataset name -->
+                <li><strong>Preprocessing</strong> — <code>src/preprocess.py</code> ingests 8 CICIDS2017 CSVs, drops redundant features, fits a StandardScaler, and exports <code>feature_names.json</code> and <code>scaler.pkl</code> to <code>artifacts/</code>.</li>
+                <li><strong>Training</strong> — <code>train_xgb.py</code> trains an XGBoost classifier with sample-weight class balancing. <code>train_anomaly.py</code> trains an Isolation Forest exclusively on BENIGN traffic for novelty detection.</li>
+                <li><strong>Evaluation &amp; Ensemble</strong> — <code>ensemble.py</code> implements an IF → XGBoost gate: anomaly-flagged flows are routed to XGBoost for classification; non-flagged flows bypass IF entirely. All runs logged to MLflow.</li>
+                <li><strong>Inference API</strong> — FastAPI app with four endpoints (<code>/predict/classify</code>, <code>/predict/anomaly</code>, <code>/predict/ensemble</code>, <code>/predict/batch</code>). Model artifacts pulled from AWS S3 at startup via boto3.</li>
+                <li><strong>CI/CD &amp; Drift</strong> — GitHub Actions: push to main → Docker build → ECR push → ECS Fargate redeploy. <code>src/monitor/drift.py</code> computes per-feature KS statistics against the training distribution, logged to MLflow.</li>
               </ul>
             </div>
 
             <div class="content-block fade-up">
-              <h2>Key Features</h2>
+              <h2>Model Performance</h2>
+              <table class="content-table" aria-label="Model performance comparison">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Approach</th>
+                    <th>Macro F1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Random Forest v1</td>
+                    <td>SMOTE oversampling</td>
+                    <td>0.8785</td>
+                  </tr>
+                  <tr>
+                    <td>Random Forest v2</td>
+                    <td>class_weight='balanced'</td>
+                    <td>0.8696</td>
+                  </tr>
+                  <tr>
+                    <td>Keras DNN</td>
+                    <td>Categorical cross-entropy</td>
+                    <td>0.3371</td>
+                  </tr>
+                  <tr class="highlight">
+                    <td>XGBoost</td>
+                    <td>Sample weights (production)</td>
+                    <td>0.9036</td>
+                  </tr>
+                  <tr>
+                    <td>Isolation Forest</td>
+                    <td>Anomaly detection (BENIGN-only)</td>
+                    <td>—</td>
+                  </tr>
+                  <tr>
+                    <td>IF → XGBoost Ensemble</td>
+                    <td>Novelty gate + classifier</td>
+                    <td>0.87*</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="font-size:0.78rem; color:var(--text-dim); margin-top:0.5rem;">
+                * Ensemble macro F1 is lower than standalone XGBoost by design — Isolation Forest gates novel/unseen traffic
+                that XGBoost was not trained on. The ensemble's value is breadth of detection, not benchmark maximisation.
+              </p>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Key Design Decisions</h2>
               <ul>
-                <li>Two-tiered ensemble approach separates detection from classification for improved accuracy and interpretability.</li>
-                <li>Production-style codebase with modular components for preprocessing, training, and inference.</li>
-                <!-- TODO: Add metrics — e.g. "Achieved X% accuracy on the Y dataset" -->
-                <li><!-- TODO: Add a third highlight — e.g. dataset size, false positive rate, inference speed --></li>
+                <li>
+                  <strong>XGBoost with sample weights over SMOTE.</strong>
+                  SMOTE introduces synthetic samples that can misrepresent minority-class decision boundaries.
+                  Sample weights achieve the same rebalancing effect during training without modifying the data
+                  distribution — preferable for production where inference operates on raw flows.
+                </li>
+                <li>
+                  <strong>No log1p transformation.</strong>
+                  Tree-based models are invariant to monotonic feature transformations.
+                  Log1p was evaluated and deliberately dropped; the notebooks record this decision with supporting evidence.
+                </li>
+                <li>
+                  <strong>Isolation Forest as a supporting actor.</strong>
+                  IF is trained exclusively on BENIGN traffic to flag flows that deviate from the normal operational
+                  envelope — not to maximise labelled-benchmark F1. Hyperparameter tuning was deliberately skipped:
+                  over-fitting its contamination parameter to CICIDS2017 labels would undermine its novelty-detection purpose.
+                </li>
+                <li>
+                  <strong>Preprocessing determinism.</strong>
+                  Correlation-based feature dropping uses <code>np.triu(k=1)</code> to ensure a stable, reproducible
+                  column set regardless of execution order or string comparison behaviour.
+                </li>
               </ul>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Project Structure</h2>
+              <p style="margin-bottom:1rem; color:var(--text-muted); font-size:0.9rem;">Click a folder to expand it. Click any filename to view it on GitHub.</p>
+              <div class="file-tree" role="tree" aria-label="Project file structure">
+
+                <div class="ft-root">
+                  <i class="fas fa-folder-open ft-icon ft-folder" aria-hidden="true"></i>
+                  network-anomaly-detector/
+                </div>
+
+                <!-- notebooks/ -->
+                <details open>
+                  <summary role="treeitem" aria-expanded="true">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    notebooks/
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file">
+                      <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/notebooks/01_eda.ipynb" target="_blank" rel="noopener noreferrer">01_eda.ipynb</a>
+                      <span class="ft-comment"># Exploratory analysis, class distribution</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/notebooks/02_preprocessing.ipynb" target="_blank" rel="noopener noreferrer">02_preprocessing.ipynb</a>
+                      <span class="ft-comment"># Feature engineering decisions</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/notebooks/03_model_training.ipynb" target="_blank" rel="noopener noreferrer">03_model_training.ipynb</a>
+                      <span class="ft-comment"># Model comparison (RF, XGBoost, DNN)</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/notebooks/04_anomaly_detection.ipynb" target="_blank" rel="noopener noreferrer">04_anomaly_detection.ipynb</a>
+                      <span class="ft-comment"># Isolation Forest, ensemble construction</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- src/ -->
+                <details open>
+                  <summary role="treeitem" aria-expanded="true">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    src/
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/preprocess.py" target="_blank" rel="noopener noreferrer">preprocess.py</a>
+                      <span class="ft-comment"># Feature selection, scaling, artifact export</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/train_xgb.py" target="_blank" rel="noopener noreferrer">train_xgb.py</a>
+                      <span class="ft-comment"># XGBoost training</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/train_anomaly.py" target="_blank" rel="noopener noreferrer">train_anomaly.py</a>
+                      <span class="ft-comment"># Isolation Forest training</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/evaluate_xgb.py" target="_blank" rel="noopener noreferrer">evaluate_xgb.py</a>
+                      <span class="ft-comment"># Classification evaluation</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/evaluate_anomaly.py" target="_blank" rel="noopener noreferrer">evaluate_anomaly.py</a>
+                      <span class="ft-comment"># Anomaly evaluation</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/ensemble.py" target="_blank" rel="noopener noreferrer">ensemble.py</a>
+                      <span class="ft-comment"># IF → XGBoost pipeline · MLflow logging</span>
+                    </div>
+
+                    <!-- src/api/ -->
+                    <details>
+                      <summary role="treeitem">
+                        <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                        api/
+                      </summary>
+                      <div class="ft-children">
+                        <div class="ft-file">
+                          <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                          <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/api/main.py" target="_blank" rel="noopener noreferrer">main.py</a>
+                          <span class="ft-comment"># FastAPI app, lifespan, S3 loading</span>
+                        </div>
+                        <div class="ft-file">
+                          <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                          <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/api/predict.py" target="_blank" rel="noopener noreferrer">predict.py</a>
+                          <span class="ft-comment"># Endpoint logic</span>
+                        </div>
+                        <div class="ft-file">
+                          <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                          <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/api/schemas.py" target="_blank" rel="noopener noreferrer">schemas.py</a>
+                          <span class="ft-comment"># Pydantic request/response models</span>
+                        </div>
+                      </div>
+                    </details>
+
+                    <!-- src/monitor/ -->
+                    <details>
+                      <summary role="treeitem">
+                        <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                        monitor/
+                      </summary>
+                      <div class="ft-children">
+                        <div class="ft-file">
+                          <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                          <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/src/monitor/drift.py" target="_blank" rel="noopener noreferrer">drift.py</a>
+                          <span class="ft-comment"># KS-test drift detection · MLflow</span>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+                </details>
+
+                <!-- artifacts/ -->
+                <details>
+                  <summary role="treeitem">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    artifacts/
+                    <span class="ft-comment ft-ignored">&nbsp;git-ignored · feature_names.json, scaler.pkl</span>
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file ft-ignored">
+                      <i class="fas fa-file ft-icon" aria-hidden="true"></i>
+                      <span>feature_names.json</span>
+                    </div>
+                    <div class="ft-file ft-ignored">
+                      <i class="fas fa-file ft-icon" aria-hidden="true"></i>
+                      <span>scaler.pkl</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- models/ -->
+                <details>
+                  <summary role="treeitem">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    models/
+                    <span class="ft-comment ft-ignored">&nbsp;git-ignored · stored in AWS S3</span>
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file ft-ignored">
+                      <i class="fas fa-file ft-icon" aria-hidden="true"></i>
+                      <span>xgb.pkl</span>
+                    </div>
+                    <div class="ft-file ft-ignored">
+                      <i class="fas fa-file ft-icon" aria-hidden="true"></i>
+                      <span>iso_forest.pkl</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- Root files -->
+                <div class="ft-file">
+                  <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/dashboard.html" target="_blank" rel="noopener noreferrer">dashboard.html</a>
+                  <span class="ft-comment"># Portfolio demo (DEMO/LIVE mode)</span>
+                </div>
+                <div class="ft-file">
+                  <i class="fab fa-docker ft-icon" style="color:#0db7ed" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/Dockerfile" target="_blank" rel="noopener noreferrer">Dockerfile</a>
+                </div>
+                <div class="ft-file">
+                  <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/.github/workflows/deploy.yml" target="_blank" rel="noopener noreferrer">.github/workflows/deploy.yml</a>
+                  <span class="ft-comment"># CI/CD → ECR → ECS Fargate</span>
+                </div>
+                <div class="ft-file">
+                  <i class="fas fa-file-alt ft-icon" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/network-anomaly-detector/blob/main/requirements.txt" target="_blank" rel="noopener noreferrer">requirements.txt</a>
+                </div>
+
+              </div>
             </div>
 
             <div class="content-block fade-up">
               <h2>What I Learned</h2>
-              <!-- TODO: Reflect on what this project taught you -->
               <p>
-                Building this project reinforced how real-world ML differs from academic exercises — data quality,
-                class imbalance in network datasets, and the challenge of keeping false positive rates low in a
-                security context all required careful thought. Add your own reflections here.
+                This project forced me to think beyond model accuracy. Getting XGBoost to 0.90 macro F1 was
+                straightforward once I understood the class imbalance problem — the harder part was designing
+                the system around it: keeping the preprocessing pipeline deterministic, giving the Isolation Forest
+                a distinct purpose from the classifier, and understanding why the ensemble's lower benchmark number
+                is evidence of better real-world behaviour, not worse.
+              </p>
+              <p style="margin-top:1rem;">
+                Deploying to AWS ECS Fargate and wiring up GitHub Actions for CI/CD made clear how much
+                production ML differs from notebook ML. Artifact management, environment variables, container
+                image versioning, and drift monitoring are all things that never appear in a Kaggle competition
+                but dominate real deployments.
               </p>
             </div>
+
           </div>
 
           <!-- Sidebar -->
@@ -125,26 +382,39 @@
             <div class="sidebar-card">
               <h3>Tech Stack</h3>
               <div class="tags">
-                <span class="tag">Python</span>
+                <span class="tag">Python 3.12</span>
+                <span class="tag">XGBoost</span>
                 <span class="tag">Scikit-learn</span>
-                <span class="tag">Ensemble Models</span>
+                <span class="tag">Isolation Forest</span>
+                <span class="tag">MLflow</span>
+                <span class="tag">FastAPI</span>
+                <span class="tag">Pydantic v2</span>
+                <span class="tag">Docker</span>
+                <span class="tag">AWS ECR</span>
+                <span class="tag">AWS ECS Fargate</span>
+                <span class="tag">AWS S3</span>
+                <span class="tag">GitHub Actions</span>
+                <span class="tag">KS Drift Monitor</span>
                 <span class="tag">Pandas</span>
                 <span class="tag">NumPy</span>
-                <span class="tag">Cyber Security</span>
-                <!-- TODO: Add any other libraries or tools you used -->
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Dataset</h3>
+              <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.75;">
+                <p><strong style="color:var(--text)">CICIDS2017</strong></p>
+                <p>2.83M labelled flows</p>
+                <p>15 traffic classes</p>
+                <p>48 features (from 79 raw)</p>
               </div>
             </div>
 
             <div class="sidebar-card">
               <h3>Links</h3>
               <div class="project-links">
-                <!-- TODO: Add your real GitHub repo link -->
-                <a href="#" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/StanSouthwick/network-anomaly-detector" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
                   <i class="fab fa-github" aria-hidden="true"></i> View on GitHub
-                </a>
-                <!-- TODO: Add a live demo link or remove this button -->
-                <a href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                  <i class="fas fa-external-link-alt" aria-hidden="true"></i> Live Demo
                 </a>
               </div>
             </div>
