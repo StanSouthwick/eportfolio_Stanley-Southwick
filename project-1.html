@@ -105,41 +105,77 @@
             <div class="content-block fade-up">
               <h2>Pipeline</h2>
               <div class="pipeline-steps">
-                <div class="pipeline-step">
-                  <div class="pipeline-step__num">01</div>
-                  <div class="pipeline-step__content">
-                    <h4>Preprocessing</h4>
-                    <p>Ingests 8 CICIDS2017 CSVs, drops redundant features, fits a StandardScaler, and exports <code>feature_names.json</code> and <code>scaler.pkl</code> to <code>artifacts/</code>.</p>
+
+                <details class="pipeline-step" open>
+                  <summary>
+                    <span class="pipeline-step__num">01</span>
+                    <i class="fas fa-database pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Preprocessing</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Ingests 8 CICIDS2017 CSVs, drops zero-variance, duplicate, and high-correlation features,
+                    fits a StandardScaler, and exports <code>feature_names.json</code> and <code>scaler.pkl</code>
+                    to <code>artifacts/</code>. 79 raw features reduced to 48.
                   </div>
-                </div>
-                <div class="pipeline-step">
-                  <div class="pipeline-step__num">02</div>
-                  <div class="pipeline-step__content">
-                    <h4>Training</h4>
-                    <p>XGBoost trained with sample-weight class balancing. Isolation Forest trained exclusively on BENIGN traffic as a novelty gate — not a classifier.</p>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">02</span>
+                    <i class="fas fa-brain pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Training</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    XGBoost classifier trained with sample-weight class balancing (chosen over SMOTE to preserve
+                    the true data distribution). Isolation Forest trained exclusively on BENIGN traffic — its role
+                    is novelty detection, not classification.
                   </div>
-                </div>
-                <div class="pipeline-step">
-                  <div class="pipeline-step__num">03</div>
-                  <div class="pipeline-step__content">
-                    <h4>Ensemble</h4>
-                    <p>IF flags anomalous flows; XGBoost classifies them. Non-flagged flows skip IF entirely. All experiment runs tracked in MLflow.</p>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">03</span>
+                    <i class="fas fa-sitemap pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Ensemble</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Isolation Forest gates incoming flows — anomalous flows are passed to XGBoost for attack
+                    classification; non-flagged flows bypass IF entirely. All runs logged to MLflow for experiment
+                    tracking and comparison.
                   </div>
-                </div>
-                <div class="pipeline-step">
-                  <div class="pipeline-step__num">04</div>
-                  <div class="pipeline-step__content">
-                    <h4>Inference API</h4>
-                    <p>FastAPI with four endpoints: <code>/predict/classify</code>, <code>/predict/anomaly</code>, <code>/predict/ensemble</code>, <code>/predict/batch</code>. Model artifacts pulled from AWS S3 at startup.</p>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">04</span>
+                    <i class="fas fa-server pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Inference API</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    FastAPI application exposing four endpoints: <code>/predict/classify</code>,
+                    <code>/predict/anomaly</code>, <code>/predict/ensemble</code>, <code>/predict/batch</code>.
+                    Model artifacts pulled from AWS S3 at startup via boto3. Interactive docs at <code>/docs</code>.
                   </div>
-                </div>
-                <div class="pipeline-step">
-                  <div class="pipeline-step__num">05</div>
-                  <div class="pipeline-step__content">
-                    <h4>CI/CD &amp; Drift Monitoring</h4>
-                    <p>GitHub Actions: push to main → Docker build → ECR push → ECS Fargate redeploy. Per-feature KS statistics computed against the training distribution and logged to MLflow.</p>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">05</span>
+                    <i class="fas fa-sync-alt pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">CI/CD &amp; Drift Monitoring</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    GitHub Actions pipeline: push to main → Docker build → push to AWS ECR → ECS Fargate
+                    redeploy. <code>drift.py</code> computes per-feature Kolmogorov–Smirnov statistics against the
+                    training distribution at runtime. KS &gt; 0.5 triggers a high-drift alert; results logged to MLflow.
                   </div>
-                </div>
+                </details>
+
               </div>
             </div>
 
