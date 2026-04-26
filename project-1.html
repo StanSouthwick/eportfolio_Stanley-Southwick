@@ -76,28 +76,71 @@
             <div class="content-block fade-up">
               <h2>Overview</h2>
               <p>
-                This project demonstrates the full ML engineering lifecycle — from raw data exploration through to a
-                containerised, cloud-deployed inference API with automated redeployment and runtime monitoring.
-                It was built as a portfolio piece targeting ML engineering roles in the defence and security sector.
+                An end-to-end ML engineering project covering the full lifecycle — from exploratory analysis on
+                raw packet captures through to a containerised inference API running on AWS, with automated
+                redeployment and runtime drift monitoring. Built to target ML engineering roles in the defence
+                and security sector.
               </p>
-              <p style="margin-top:1rem;">
-                The dataset is <strong style="color:var(--text)">CICIDS2017</strong> (Canadian Institute for Cybersecurity),
-                comprising <strong style="color:var(--text)">2.83 million labelled network flows</strong> across 15 traffic classes —
-                including DoS, DDoS, PortScan, Brute Force, Web Attacks, and Infiltration.
-                Raw CSVs are preprocessed down from 79 features to 48 by dropping zero-variance, duplicate, and
-                high-correlation columns, producing a deterministic, reproducible feature set.
+              <p>
+                Trained on <strong>CICIDS2017</strong> (Canadian Institute for Cybersecurity): 2.83M labelled
+                network flows across 15 attack classes including DoS, DDoS, PortScan, Brute Force, and Web Attacks.
+                Features were reduced from 79 to 48 by dropping zero-variance, duplicate, and high-correlation columns.
               </p>
+              <div class="stat-row" aria-label="Key metrics">
+                <div class="stat">
+                  <span class="stat__value">2.83M</span>
+                  <span class="stat__label">Labelled flows</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">0.9036</span>
+                  <span class="stat__label">XGBoost macro F1</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">15</span>
+                  <span class="stat__label">Attack classes</span>
+                </div>
+              </div>
             </div>
 
             <div class="content-block fade-up">
-              <h2>Architecture</h2>
-              <ul>
-                <li><strong>Preprocessing</strong> — <code>src/preprocess.py</code> ingests 8 CICIDS2017 CSVs, drops redundant features, fits a StandardScaler, and exports <code>feature_names.json</code> and <code>scaler.pkl</code> to <code>artifacts/</code>.</li>
-                <li><strong>Training</strong> — <code>train_xgb.py</code> trains an XGBoost classifier with sample-weight class balancing. <code>train_anomaly.py</code> trains an Isolation Forest exclusively on BENIGN traffic for novelty detection.</li>
-                <li><strong>Evaluation &amp; Ensemble</strong> — <code>ensemble.py</code> implements an IF → XGBoost gate: anomaly-flagged flows are routed to XGBoost for classification; non-flagged flows bypass IF entirely. All runs logged to MLflow.</li>
-                <li><strong>Inference API</strong> — FastAPI app with four endpoints (<code>/predict/classify</code>, <code>/predict/anomaly</code>, <code>/predict/ensemble</code>, <code>/predict/batch</code>). Model artifacts pulled from AWS S3 at startup via boto3.</li>
-                <li><strong>CI/CD &amp; Drift</strong> — GitHub Actions: push to main → Docker build → ECR push → ECS Fargate redeploy. <code>src/monitor/drift.py</code> computes per-feature KS statistics against the training distribution, logged to MLflow.</li>
-              </ul>
+              <h2>Pipeline</h2>
+              <div class="pipeline-steps">
+                <div class="pipeline-step">
+                  <div class="pipeline-step__num">01</div>
+                  <div class="pipeline-step__content">
+                    <h4>Preprocessing</h4>
+                    <p>Ingests 8 CICIDS2017 CSVs, drops redundant features, fits a StandardScaler, and exports <code>feature_names.json</code> and <code>scaler.pkl</code> to <code>artifacts/</code>.</p>
+                  </div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipeline-step__num">02</div>
+                  <div class="pipeline-step__content">
+                    <h4>Training</h4>
+                    <p>XGBoost trained with sample-weight class balancing. Isolation Forest trained exclusively on BENIGN traffic as a novelty gate — not a classifier.</p>
+                  </div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipeline-step__num">03</div>
+                  <div class="pipeline-step__content">
+                    <h4>Ensemble</h4>
+                    <p>IF flags anomalous flows; XGBoost classifies them. Non-flagged flows skip IF entirely. All experiment runs tracked in MLflow.</p>
+                  </div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipeline-step__num">04</div>
+                  <div class="pipeline-step__content">
+                    <h4>Inference API</h4>
+                    <p>FastAPI with four endpoints: <code>/predict/classify</code>, <code>/predict/anomaly</code>, <code>/predict/ensemble</code>, <code>/predict/batch</code>. Model artifacts pulled from AWS S3 at startup.</p>
+                  </div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipeline-step__num">05</div>
+                  <div class="pipeline-step__content">
+                    <h4>CI/CD &amp; Drift Monitoring</h4>
+                    <p>GitHub Actions: push to main → Docker build → ECR push → ECS Fargate redeploy. Per-feature KS statistics computed against the training distribution and logged to MLflow.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="content-block fade-up">
@@ -133,7 +176,7 @@
                   </tr>
                   <tr>
                     <td>Isolation Forest</td>
-                    <td>Anomaly detection (BENIGN-only)</td>
+                    <td>BENIGN-only novelty detection</td>
                     <td>—</td>
                   </tr>
                   <tr>
@@ -143,43 +186,37 @@
                   </tr>
                 </tbody>
               </table>
-              <p style="font-size:0.78rem; color:var(--text-dim); margin-top:0.5rem;">
-                * Ensemble macro F1 is lower than standalone XGBoost by design — Isolation Forest gates novel/unseen traffic
-                that XGBoost was not trained on. The ensemble's value is breadth of detection, not benchmark maximisation.
+              <p class="table-note">
+                * Ensemble F1 is lower than standalone XGBoost by design — IF gates traffic that XGBoost was never trained on.
+                The ensemble's value is breadth of detection, not benchmark maximisation.
               </p>
             </div>
 
             <div class="content-block fade-up">
-              <h2>Key Design Decisions</h2>
-              <ul>
-                <li>
-                  <strong>XGBoost with sample weights over SMOTE.</strong>
-                  SMOTE introduces synthetic samples that can misrepresent minority-class decision boundaries.
-                  Sample weights achieve the same rebalancing effect during training without modifying the data
-                  distribution — preferable for production where inference operates on raw flows.
-                </li>
-                <li>
-                  <strong>No log1p transformation.</strong>
-                  Tree-based models are invariant to monotonic feature transformations.
-                  Log1p was evaluated and deliberately dropped; the notebooks record this decision with supporting evidence.
-                </li>
-                <li>
-                  <strong>Isolation Forest as a supporting actor.</strong>
-                  IF is trained exclusively on BENIGN traffic to flag flows that deviate from the normal operational
-                  envelope — not to maximise labelled-benchmark F1. Hyperparameter tuning was deliberately skipped:
-                  over-fitting its contamination parameter to CICIDS2017 labels would undermine its novelty-detection purpose.
-                </li>
-                <li>
-                  <strong>Preprocessing determinism.</strong>
-                  Correlation-based feature dropping uses <code>np.triu(k=1)</code> to ensure a stable, reproducible
-                  column set regardless of execution order or string comparison behaviour.
-                </li>
-              </ul>
+              <h2>Design Decisions</h2>
+              <div class="decision-list">
+                <div class="decision">
+                  <p class="decision__title">Sample weights over SMOTE</p>
+                  <p class="decision__body">SMOTE introduces synthetic samples that can distort minority-class decision boundaries. Sample weights rebalance training without touching the data distribution — preferable for production where inference runs on raw flows.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">No log1p transformation</p>
+                  <p class="decision__body">Tree-based models are invariant to monotonic feature transformations. Log1p was evaluated and deliberately dropped; the notebooks document this with supporting evidence.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Isolation Forest as a novelty gate, not a classifier</p>
+                  <p class="decision__body">IF is trained on BENIGN-only traffic to flag out-of-distribution flows. Hyperparameter tuning was deliberately skipped — overfitting the contamination parameter to labelled benchmarks would undermine its real purpose.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Deterministic preprocessing</p>
+                  <p class="decision__body">Correlation-based feature dropping uses <code>np.triu(k=1)</code> to guarantee a stable, reproducible column set regardless of execution order.</p>
+                </div>
+              </div>
             </div>
 
             <div class="content-block fade-up">
               <h2>Project Structure</h2>
-              <p style="margin-bottom:1rem; color:var(--text-muted); font-size:0.9rem;">Click a folder to expand it. Click any filename to view it on GitHub.</p>
+              <p class="section-subtitle" style="margin-bottom:1rem;">Expand a folder to browse. Click any filename to open it on GitHub.</p>
               <div class="file-tree" role="tree" aria-label="Project file structure">
 
                 <div class="ft-root">
@@ -361,17 +398,15 @@
             <div class="content-block fade-up">
               <h2>What I Learned</h2>
               <p>
-                This project forced me to think beyond model accuracy. Getting XGBoost to 0.90 macro F1 was
-                straightforward once I understood the class imbalance problem — the harder part was designing
-                the system around it: keeping the preprocessing pipeline deterministic, giving the Isolation Forest
-                a distinct purpose from the classifier, and understanding why the ensemble's lower benchmark number
-                is evidence of better real-world behaviour, not worse.
+                Getting XGBoost to 0.90 macro F1 was the straightforward part — the harder work was designing
+                the system around it. Keeping preprocessing deterministic, giving the Isolation Forest a genuinely
+                different purpose from the classifier, and arguing why a lower ensemble F1 is actually the correct
+                outcome all required thinking beyond benchmark numbers.
               </p>
-              <p style="margin-top:1rem;">
-                Deploying to AWS ECS Fargate and wiring up GitHub Actions for CI/CD made clear how much
-                production ML differs from notebook ML. Artifact management, environment variables, container
-                image versioning, and drift monitoring are all things that never appear in a Kaggle competition
-                but dominate real deployments.
+              <p>
+                Deploying to ECS Fargate and wiring up CI/CD made clear how much production ML differs from
+                notebook ML. Artifact management, environment variables, container versioning, and drift monitoring
+                never appear in a Kaggle competition — but they dominate real deployments.
               </p>
             </div>
 
@@ -402,12 +437,12 @@
 
             <div class="sidebar-card">
               <h3>Dataset</h3>
-              <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.75;">
-                <p><strong style="color:var(--text)">CICIDS2017</strong></p>
-                <p>2.83M labelled flows</p>
-                <p>15 traffic classes</p>
-                <p>48 features (from 79 raw)</p>
-              </div>
+              <ul class="dataset-list">
+                <li><strong>CICIDS2017</strong></li>
+                <li><span>Flows</span> <strong>2.83M</strong></li>
+                <li><span>Classes</span> <strong>15</strong></li>
+                <li><span>Features</span> <strong>48 of 79</strong></li>
+              </ul>
             </div>
 
             <div class="sidebar-card">

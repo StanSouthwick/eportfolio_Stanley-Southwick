@@ -300,6 +300,41 @@ section { padding: 6rem 0; }
 .project-links { display: flex; flex-direction: column; gap: 0.65rem; }
 .project-links .btn { justify-content: center; width: 100%; }
 
+/* === Inline code === */
+code { font-family: var(--font-mono); font-size: 0.82em; background: rgba(59,130,246,0.1); color: var(--blue-bright); padding: 0.15em 0.45em; border-radius: 4px; border: 1px solid rgba(59,130,246,0.15); white-space: nowrap; }
+
+/* === Stat row === */
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+.stat { background: rgba(37,99,235,0.06); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; transition: border-color 0.3s var(--ease); }
+.stat:hover { border-color: var(--border-hover); }
+.stat__value { display: block; font-size: 1.35rem; font-weight: 800; color: var(--blue-bright); letter-spacing: -0.02em; }
+.stat__label { display: block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-top: 0.3rem; }
+
+/* === Pipeline steps === */
+.pipeline-steps { display: flex; flex-direction: column; gap: 0; margin-top: 0.75rem; }
+.pipeline-step { display: flex; gap: 1rem; position: relative; padding-bottom: 1.25rem; }
+.pipeline-step:last-child { padding-bottom: 0; }
+.pipeline-step::before { content: ''; position: absolute; left: 1.1rem; top: 2.2rem; bottom: 0; width: 1px; background: var(--border); }
+.pipeline-step:last-child::before { display: none; }
+.pipeline-step__num { width: 2.2rem; height: 2.2rem; flex-shrink: 0; border-radius: 8px; background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; color: var(--blue-bright); }
+.pipeline-step__content { padding-top: 0.3rem; }
+.pipeline-step__content h4 { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
+.pipeline-step__content p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.75; }
+
+/* === Design decisions === */
+.decision-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem; }
+.decision { background: rgba(17,24,48,0.5); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; transition: border-color 0.3s var(--ease); }
+.decision:hover { border-color: var(--border-hover); }
+.decision__title { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+.decision__body { font-size: 0.85rem; color: var(--text-muted); line-height: 1.75; margin: 0; }
+
+/* === Misc project page helpers === */
+.table-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.65rem; line-height: 1.6; }
+.content-block p + p { margin-top: 1rem; }
+.dataset-list { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; }
+.dataset-list li { font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+.dataset-list li strong { color: var(--text); font-weight: 600; }
+
 /* === Tables === */
 .content-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; overflow-x: auto; display: block; }
 .content-table th { text-align: left; padding: 0.55rem 0.85rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); border-bottom: 1px solid var(--border); white-space: nowrap; }
