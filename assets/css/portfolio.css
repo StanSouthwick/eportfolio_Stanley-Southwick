@@ -288,6 +288,7 @@ section { padding: 6rem 0; }
 .project-body { padding: 0 0 6rem; }
 .project-body__grid { display: grid; grid-template-columns: 1fr 300px; gap: 4rem; align-items: start; }
 .project-body__img { width: 100%; height: 380px; object-fit: cover; object-position: center; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 3rem; display: block; }
+.project-body__img--graphic { height: 180px; object-fit: contain; background: rgba(15,20,40,0.6); }
 .content-block { margin-bottom: 2.5rem; }
 .content-block h2 { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
 .content-block p { color: var(--text-muted); line-height: 1.85; font-size: 0.97rem; }
