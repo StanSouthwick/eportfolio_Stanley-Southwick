@@ -76,15 +76,20 @@
             <div class="content-block fade-up">
               <h2>Overview</h2>
               <p>
-                An end-to-end ML engineering project covering the full lifecycle — from exploratory analysis on
-                raw packet captures through to a containerised inference API running on AWS, with automated
-                redeployment and runtime drift monitoring. Built to target ML engineering roles in the defence
-                and security sector.
+                Built a full production ML pipeline for network intrusion detection on the CICIDS2017 dataset —
+                2.83M labelled flows, 15 attack classes, 48 features after preprocessing.
               </p>
               <p>
-                Trained on <strong>CICIDS2017</strong> (Canadian Institute for Cybersecurity): 2.83M labelled
-                network flows across 15 attack classes including DoS, DDoS, PortScan, Brute Force, and Web Attacks.
-                Features were reduced from 79 to 48 by dropping zero-variance, duplicate, and high-correlation columns.
+                The core model is an XGBoost classifier (macro F1 = 0.9036) trained with sample weights to handle
+                class imbalance without distorting the data distribution. An Isolation Forest, trained exclusively
+                on benign traffic, acts as a novelty gate — flagging out-of-distribution flows before XGBoost
+                classifies them.
+              </p>
+              <p>
+                The pipeline runs end-to-end in production: a FastAPI inference API with four endpoints is
+                containerised with Docker, pushed to AWS ECR, and deployed on ECS Fargate. GitHub Actions handles
+                CI/CD — a push to main triggers a full rebuild and redeploy. Model artifacts are stored in S3 and
+                pulled at startup via boto3. Runtime drift is monitored per feature using KS tests, logged to MLflow.
               </p>
               <div class="stat-row" aria-label="Key metrics">
                 <div class="stat">
