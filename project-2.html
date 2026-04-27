@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Project 2 — Stanley Southwick E-Portfolio" />
-  <!-- TODO: Update the title with your actual project name -->
-  <title>Project 2 | Stanley Southwick</title>
+  <meta name="description" content="MSc Artificial Intelligence — academic notebook projects covering fraud detection, housing regression, data analytics, and explainable AI. Stanley Southwick E-Portfolio." />
+  <title>MSc AI — Academic Projects | Stanley Southwick</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -57,14 +56,11 @@
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
           <a href="index.html#projects">Projects</a>
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
-          <!-- TODO: Replace with your project name -->
-          <span>Project 2</span>
+          <span>MSc AI — Academic Projects</span>
         </nav>
         <p class="project-hero__num">Project 02</p>
-        <!-- TODO: Replace with your actual project name -->
-        <h1 class="project-hero__title" id="project-title">Project 2</h1>
-        <!-- TODO: One-line tagline for this project -->
-        <p class="project-hero__desc">A short, punchy description of what this project does and the problem it solves.</p>
+        <h1 class="project-hero__title" id="project-title">MSc Artificial Intelligence</h1>
+        <p class="project-hero__desc">A growing collection of academic notebook projects completed as part of my MSc in AI — covering fraud detection, regression, data analytics, and explainable AI. Early work, documented honestly.</p>
       </div>
     </section>
 
@@ -75,63 +71,232 @@
 
           <!-- Main content -->
           <div>
-            <!-- TODO: Replace with a screenshot or banner image for this project -->
-            <img class="project-body__img" src="images/pic02.jpg" alt="Screenshot of Project 2" />
+            <img class="project-body__img" src="images/pic02.jpg" alt="MSc AI academic projects" />
 
             <div class="content-block fade-up">
-              <h2>Overview</h2>
-              <!-- TODO: Describe what this project is, why you built it, and what it achieves -->
-              <p>This section is a placeholder. Describe your project here — what it is, why you built it, and what it achieves. Be specific: mention the dataset, the model, the tool, or the problem domain.</p>
+              <h2>Where I Am</h2>
+              <p>
+                My MSc in Artificial Intelligence is currently underway. The projects on this page are the early
+                exercises and assignments from the programme — Jupyter notebooks built to learn the fundamentals:
+                how to handle real datasets, apply standard ML algorithms, and critically evaluate results.
+              </p>
+              <p>
+                These are not production systems. They are the foundation. The jump from textbook notebook to
+                the production pipeline in Project 1 was deliberate — I wanted to show both ends of the spectrum:
+                what the learning looks like, and where it leads.
+              </p>
+              <div class="stat-row" aria-label="Key metrics">
+                <div class="stat">
+                  <span class="stat__value">5</span>
+                  <span class="stat__label">Notebook projects</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">3</span>
+                  <span class="stat__label">Domains covered</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">2</span>
+                  <span class="stat__label">Languages compared</span>
+                </div>
+              </div>
             </div>
 
             <div class="content-block fade-up">
-              <h2>Key Features</h2>
-              <!-- TODO: Replace with real features/achievements -->
-              <ul>
-                <li>Feature or achievement 1 — be specific about what it does</li>
-                <li>Feature or achievement 2 — metrics, accuracy, or scale if relevant</li>
-                <li>Feature or achievement 3 — design decisions you made</li>
-              </ul>
+              <h2>Notebook Projects</h2>
+              <div class="notebook-grid">
+
+                <div class="notebook-card">
+                  <div class="notebook-card__header">
+                    <i class="fas fa-credit-card notebook-card__icon" aria-hidden="true"></i>
+                    <span class="notebook-card__title">Credit Card Fraud Detection</span>
+                  </div>
+                  <p class="notebook-card__desc">
+                    Binary classification on a 10k-row dataset with ~1.5% fraud rate — realistic class imbalance
+                    typical of real banking data. Applied EDA to assess feature correlations, then trained a
+                    Random Forest classifier. Evaluated with precision, recall, and confusion matrix.
+                  </p>
+                  <div class="notebook-card__tags">
+                    <span class="notebook-card__tag">Random Forest</span>
+                    <span class="notebook-card__tag">Class Imbalance</span>
+                    <span class="notebook-card__tag">EDA</span>
+                    <span class="notebook-card__tag">Scikit-learn</span>
+                  </div>
+                </div>
+
+                <div class="notebook-card">
+                  <div class="notebook-card__header">
+                    <i class="fas fa-mobile-alt notebook-card__icon" aria-hidden="true"></i>
+                    <span class="notebook-card__title">Digital Payment Fraud Detection</span>
+                  </div>
+                  <p class="notebook-card__desc">
+                    A deliberate model comparison exercise: Logistic Regression vs Random Forest on the same
+                    payment dataset. The dataset turned out to be poorly representative (hence the "bad dataset"
+                    label) — a useful lesson in how data quality affects model trustworthiness.
+                  </p>
+                  <div class="notebook-card__tags">
+                    <span class="notebook-card__tag">Logistic Regression</span>
+                    <span class="notebook-card__tag">Random Forest</span>
+                    <span class="notebook-card__tag">Model Comparison</span>
+                    <span class="notebook-card__tag">Pandas</span>
+                  </div>
+                </div>
+
+                <div class="notebook-card">
+                  <div class="notebook-card__header">
+                    <i class="fas fa-home notebook-card__icon" aria-hidden="true"></i>
+                    <span class="notebook-card__title">Housing Price Regression</span>
+                  </div>
+                  <p class="notebook-card__desc">
+                    My first end-to-end ML pipeline — data loading, preprocessing, train/test split, model
+                    training, and evaluation. A regression problem on real estate data. Simple by current
+                    standards, but where the habit of structuring ML work properly began.
+                  </p>
+                  <div class="notebook-card__tags">
+                    <span class="notebook-card__tag">Regression</span>
+                    <span class="notebook-card__tag">Preprocessing</span>
+                    <span class="notebook-card__tag">Scikit-learn</span>
+                    <span class="notebook-card__tag">NumPy</span>
+                  </div>
+                </div>
+
+                <div class="notebook-card">
+                  <div class="notebook-card__header">
+                    <i class="fas fa-globe notebook-card__icon" aria-hidden="true"></i>
+                    <span class="notebook-card__title">Covid-19 Global Data Analytics</span>
+                  </div>
+                  <p class="notebook-card__desc">
+                    Data cleaning and visualisation exercise on a global Covid-19 dataset. Handled missing
+                    continent labels caused by non-country location entries, then produced comparative continent
+                    charts using Matplotlib with logarithmic scaling to handle order-of-magnitude differences.
+                  </p>
+                  <div class="notebook-card__tags">
+                    <span class="notebook-card__tag">Pandas</span>
+                    <span class="notebook-card__tag">Matplotlib</span>
+                    <span class="notebook-card__tag">Data Cleaning</span>
+                    <span class="notebook-card__tag">Data Visualisation</span>
+                  </div>
+                </div>
+
+                <div class="notebook-card">
+                  <div class="notebook-card__header">
+                    <i class="fas fa-heartbeat notebook-card__icon" aria-hidden="true"></i>
+                    <span class="notebook-card__title">Diabetes — Explainable AI</span>
+                  </div>
+                  <p class="notebook-card__desc">
+                    Classification on the Kaggle diabetes dataset (768 rows, 9 features) with a focus on
+                    explainability rather than pure accuracy. Demonstrates how to interrogate model decisions
+                    and understand which features drive predictions — a skill directly relevant to high-stakes
+                    domains like healthcare and security.
+                  </p>
+                  <div class="notebook-card__tags">
+                    <span class="notebook-card__tag">Explainable AI</span>
+                    <span class="notebook-card__tag">Classification</span>
+                    <span class="notebook-card__tag">Kaggle</span>
+                    <span class="notebook-card__tag">Scikit-learn</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
             <div class="content-block fade-up">
-              <h2>What I Learned</h2>
-              <!-- TODO: Reflect on skills gained, challenges overcome, lessons learned -->
-              <p>This section is a placeholder. Reflect on the skills you developed, challenges you overcame, and lessons learned. This is often the most interesting part for readers — be honest about what was hard.</p>
+              <h2>Write-ups &amp; Analysis</h2>
+              <div class="pipeline-steps">
+
+                <details class="pipeline-step" open>
+                  <summary>
+                    <span class="pipeline-step__num">A1</span>
+                    <i class="fas fa-code pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Name Sorting Algorithm — Code Exploration</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Implemented a name-sorting algorithm in both Python and JavaScript as an introduction to
+                    language syntax, data structures, and algorithmic thinking. The write-up documents the
+                    implementation approach and observations on how each language handles the same problem.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">A2</span>
+                    <i class="fas fa-balance-scale pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Python vs JavaScript — Language Comparison</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    A structured comparison of Python and JavaScript across syntax, typing, use cases, and
+                    ecosystem. Covers where each language excels — Python's dominance in data and ML workflows
+                    vs JavaScript's role in web and asynchronous programming — and what using both teaches
+                    about thinking in different paradigms.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">A3</span>
+                    <i class="fas fa-robot pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Artificial Intelligence in 10 Years</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    An essay written at the start of the MSc exploring where AI is heading over the next decade —
+                    covering advances in large language models, AI in defence and security, the role of explainability
+                    in high-stakes systems, and the ethical and societal implications of increasingly autonomous systems.
+                    A snapshot of my thinking at the beginning of the programme.
+                  </div>
+                </details>
+
+              </div>
             </div>
+
+            <div class="content-block fade-up">
+              <h2>Studies &amp; Industry — Hand in Hand</h2>
+              <p>
+                The goal was never to finish the MSc in isolation. Each module I complete, each concept I study,
+                I want to be putting into practice in a real engineering environment. The network anomaly detector
+                in Project 1 is proof of that — it was built during the programme, not after it.
+              </p>
+              <p>
+                Landing a role in ML or AI engineering will accelerate the MSc, not compete with it. Production
+                problems surface edge cases and constraints that academic datasets never do. That gap between
+                textbook and real-world is exactly where the most important learning happens — and I intend to
+                be working in it.
+              </p>
+            </div>
+
           </div>
 
           <!-- Sidebar -->
           <aside class="project-sidebar" aria-label="Project details">
             <div class="sidebar-card">
               <h3>Tech Stack</h3>
-              <!-- TODO: Replace with the actual technologies you used -->
               <div class="tags">
                 <span class="tag">Python</span>
-                <span class="tag">Technology 2</span>
-                <span class="tag">Library 3</span>
-                <span class="tag">Tool 4</span>
+                <span class="tag">Jupyter</span>
+                <span class="tag">Scikit-learn</span>
+                <span class="tag">Pandas</span>
+                <span class="tag">NumPy</span>
+                <span class="tag">Matplotlib</span>
+                <span class="tag">Seaborn</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Explainable AI</span>
               </div>
             </div>
 
             <div class="sidebar-card">
-              <h3>Links</h3>
-              <div class="project-links">
-                <!-- TODO: Add your real GitHub repo link -->
-                <a href="#" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
-                  <i class="fab fa-github" aria-hidden="true"></i> View on GitHub
-                </a>
-                <!-- TODO: Add a live demo link or remove this button -->
-                <a href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                  <i class="fas fa-external-link-alt" aria-hidden="true"></i> Live Demo
-                </a>
-              </div>
+              <h3>Programme</h3>
+              <ul class="dataset-list">
+                <li><span>Degree</span> <strong>MSc AI</strong></li>
+                <li><span>Status</span> <strong>In progress</strong></li>
+                <li><span>Notebooks</span> <strong>5</strong></li>
+                <li><span>Write-ups</span> <strong>3</strong></li>
+              </ul>
             </div>
 
             <div class="sidebar-card">
               <h3>Status</h3>
-              <!-- TODO: Change badge-soon to badge-live when the project is complete -->
-              <span class="badge badge-soon">Coming soon</span>
+              <span class="badge badge-soon">In progress</span>
             </div>
           </aside>
 
