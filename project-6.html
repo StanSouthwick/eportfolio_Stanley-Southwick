@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Helsinki-NLP Translation API — production-ready REST API for English to French, German, and Spanish translation using MarianMT transformers. FastAPI, Docker, Prometheus monitoring. Stanley Southwick E-Portfolio." />
+  <title>Translation API | Stanley Southwick</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+  <link rel="stylesheet" href="assets/css/portfolio.css" />
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">Stanley<span>.</span></a>
+      <ul class="nav__links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#projects" class="active">Projects</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <a href="professional_documents/Stanley_Southwick-CV.docx" download class="btn btn-outline btn-sm">
+          <i class="fas fa-download" aria-hidden="true"></i> CV
+        </a>
+      </div>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="nav__mobile" id="mobileMenu" role="dialog" aria-label="Mobile navigation" aria-modal="true">
+    <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu"><i class="fas fa-times"></i></button>
+    <a href="index.html#about"    onclick="closeMobile()">About</a>
+    <a href="index.html#projects" onclick="closeMobile()">Projects</a>
+    <a href="index.html#contact"  onclick="closeMobile()">Contact</a>
+    <a href="professional_documents/Stanley_Southwick-CV.docx" download class="btn btn-primary" onclick="closeMobile()">
+      <i class="fas fa-download"></i> Download CV
+    </a>
+  </div>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="project-hero" aria-labelledby="project-title">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          <a href="index.html#projects">Projects</a>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          <span>Translation API</span>
+        </nav>
+        <p class="project-hero__num">Project 06</p>
+        <h1 class="project-hero__title" id="project-title">Helsinki-NLP Translation API</h1>
+        <p class="project-hero__desc">Production-ready REST API for translating English into French, German, and Spanish — built on Helsinki-NLP's OPUS-MT transformer models, served via FastAPI, containerised with Docker, and monitored with Prometheus.</p>
+      </div>
+    </section>
+
+    <!-- Body -->
+    <section class="project-body">
+      <div class="container">
+        <div class="project-body__grid">
+
+          <!-- Main content -->
+          <div>
+            <img class="project-body__img" src="images/translator.jpg" alt="Helsinki-NLP Translation API — language dictionaries" />
+
+            <div class="content-block fade-up">
+              <h2>Overview</h2>
+              <p>
+                A production-ready translation service that takes English text and translates it into French, German,
+                or Spanish using MarianMT transformer models from Helsinki-NLP's OPUS-MT family on HuggingFace.
+                The API is designed for real-world deployment — not a notebook demo.
+              </p>
+              <p>
+                Models load lazily on first request per language and are cached in memory for the application lifetime,
+                meaning startup is instant and there's no cold-start penalty after the first translation. CPU-bound
+                inference runs via <code>asyncio.run_in_executor</code> in a thread pool, keeping the async event loop
+                free to accept and route new requests while inference happens in a separate thread.
+              </p>
+              <p>
+                The architecture separates concerns cleanly: translation logic, input validation, safeguarding, and
+                monitoring each live in dedicated modules. Model weights are downloaded at Docker build time, so
+                containers have zero internet dependency at runtime — fully self-contained and reproducible.
+              </p>
+              <div class="stat-row" aria-label="Key metrics">
+                <div class="stat">
+                  <span class="stat__value">3</span>
+                  <span class="stat__label">Target languages</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">5</span>
+                  <span class="stat__label">API endpoints</span>
+                </div>
+                <div class="stat">
+                  <span class="stat__value">&lt;2s</span>
+                  <span class="stat__label">Full test suite</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Architecture</h2>
+              <p>
+                The request flow is linear and auditable:
+                <strong>Request &rarr; FastAPI &rarr; Safeguards &rarr; Translator &rarr; MarianMT (thread pool) &rarr; Response</strong>.
+                HTTP exceptions (422/400) are raised early by Pydantic validation and safeguard checks before any
+                model inference runs. HuggingFace cache integration ensures models are loaded once and reused.
+              </p>
+              <div class="pipeline-steps">
+
+                <details class="pipeline-step" open>
+                  <summary>
+                    <span class="pipeline-step__num">01</span>
+                    <i class="fas fa-shield-alt pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Input Safeguarding</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    <code>safeguards.py</code> validates all inputs before they reach the model and all outputs
+                    before they reach the caller. Input checks include empty string detection and regex-based
+                    prompt injection detection — preventing adversarial inputs from reaching the transformer.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">02</span>
+                    <i class="fas fa-language pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Translation Engine</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    <code>translator.py</code> handles model loading and inference. Models are lazily loaded on
+                    first request per language pair and cached in memory. Adding a new language is a single-line
+                    change — just add the Helsinki-NLP model identifier to the language map. Inference runs in a
+                    thread pool via <code>run_in_executor</code> to keep the async event loop non-blocking.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">03</span>
+                    <i class="fas fa-server pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">FastAPI Service</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Five endpoints: <code>/health</code> for liveness checks, <code>/languages</code> to list
+                    supported targets, <code>/translate</code> for inference, <code>/evaluate</code> for BLEU
+                    scoring against human references, and <code>/metrics</code> for Prometheus scraping. Pydantic v2
+                    schemas enforce request/response contracts.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">04</span>
+                    <i class="fas fa-chart-line pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Monitoring &amp; Evaluation</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Prometheus metrics are scraped every 15 seconds, exposing request count, latency histograms
+                    (enabling p50/p95/p99 calculations), and in-progress request tracking per endpoint. The
+                    <code>/evaluate</code> endpoint uses sacrebleu to score translations against human references,
+                    enabling continuous quality evaluation in production.
+                  </div>
+                </details>
+
+                <details class="pipeline-step">
+                  <summary>
+                    <span class="pipeline-step__num">05</span>
+                    <i class="fab fa-docker pipeline-step__icon" aria-hidden="true"></i>
+                    <span class="pipeline-step__title">Containerisation &amp; CI</span>
+                    <i class="fas fa-chevron-down pipeline-step__chevron" aria-hidden="true"></i>
+                  </summary>
+                  <div class="pipeline-step__body">
+                    Docker and Docker Compose for local and production deployment. Model weights are baked into
+                    the image at build time via <code>download_models.py</code> — no runtime downloads, no
+                    external dependencies. GitHub Actions CI runs the full test suite on every push.
+                  </div>
+                </details>
+
+              </div>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>API Endpoints</h2>
+              <table class="content-table" aria-label="API endpoint reference">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Purpose</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/health</code></td>
+                    <td>Liveness check for load balancers and orchestrators</td>
+                  </tr>
+                  <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/languages</code></td>
+                    <td>Returns supported language codes and model identifiers</td>
+                  </tr>
+                  <tr class="highlight">
+                    <td><code>POST</code></td>
+                    <td><code>/translate</code></td>
+                    <td>Translates English text to target language (fr, de, es)</td>
+                  </tr>
+                  <tr>
+                    <td><code>POST</code></td>
+                    <td><code>/evaluate</code></td>
+                    <td>Scores a translation against a human reference using BLEU</td>
+                  </tr>
+                  <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/metrics</code></td>
+                    <td>Prometheus metrics — request count, latency histograms, in-progress</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Design Decisions</h2>
+              <div class="decision-list">
+                <div class="decision">
+                  <p class="decision__title">Lazy loading with caching over eager loading</p>
+                  <p class="decision__body">Models load on first request per language and stay in memory. Startup is instant, and languages that are never requested never consume resources. In a production multi-language service, this avoids loading all models upfront when only a subset may be used.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Thread pool inference, not blocking the event loop</p>
+                  <p class="decision__body">MarianMT inference is CPU-bound. Running it directly in the async handler would block all other requests. <code>run_in_executor</code> offloads inference to a thread pool, keeping the event loop free for concurrent request handling — critical for production throughput.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Baked model weights at build time</p>
+                  <p class="decision__body">Model weights are downloaded during the Docker build, not at runtime. This makes containers fully self-contained — no internet dependency, no startup latency from downloads, and deterministic behaviour across deployments.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Input safeguarding before inference</p>
+                  <p class="decision__body">All inputs are validated and checked for prompt injection patterns before reaching the transformer. Empty strings, malformed requests, and adversarial inputs are rejected early — safeguarding is a separate module, not scattered across handlers.</p>
+                </div>
+                <div class="decision">
+                  <p class="decision__title">Single-line language extensibility</p>
+                  <p class="decision__body">Adding a new target language requires only adding the Helsinki-NLP model identifier to the language map in <code>translator.py</code>. No changes to routing, validation, or any other module — the architecture supports extension without modification.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>Project Structure</h2>
+              <p class="section-subtitle" style="margin-bottom:1rem;">Expand a folder to browse. Click any filename to open it on GitHub.</p>
+              <div class="file-tree" role="tree" aria-label="Project file structure">
+
+                <div class="ft-root">
+                  <i class="fas fa-folder-open ft-icon ft-folder" aria-hidden="true"></i>
+                  Helsinki-NLP-Translate/
+                </div>
+
+                <!-- app/ -->
+                <details open>
+                  <summary role="treeitem" aria-expanded="true">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    app/
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/__init__.py" target="_blank" rel="noopener noreferrer">__init__.py</a>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/main.py" target="_blank" rel="noopener noreferrer">main.py</a>
+                      <span class="ft-comment"># FastAPI app, endpoint routing</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/translator.py" target="_blank" rel="noopener noreferrer">translator.py</a>
+                      <span class="ft-comment"># MarianMT loading, caching, inference</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/safeguards.py" target="_blank" rel="noopener noreferrer">safeguards.py</a>
+                      <span class="ft-comment"># Input/output validation, injection detection</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/schemas.py" target="_blank" rel="noopener noreferrer">schemas.py</a>
+                      <span class="ft-comment"># Pydantic v2 request/response models</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/evaluation.py" target="_blank" rel="noopener noreferrer">evaluation.py</a>
+                      <span class="ft-comment"># BLEU scoring via sacrebleu</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/app/monitoring.py" target="_blank" rel="noopener noreferrer">monitoring.py</a>
+                      <span class="ft-comment"># Prometheus metrics integration</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- tests/ -->
+                <details open>
+                  <summary role="treeitem" aria-expanded="true">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    tests/
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/tests/__init__.py" target="_blank" rel="noopener noreferrer">__init__.py</a>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/tests/test_api.py" target="_blank" rel="noopener noreferrer">test_api.py</a>
+                      <span class="ft-comment"># Endpoint tests with mocked models</span>
+                    </div>
+                    <div class="ft-file">
+                      <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/tests/test_translator.py" target="_blank" rel="noopener noreferrer">test_translator.py</a>
+                      <span class="ft-comment"># Translation logic unit tests</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- .github/workflows/ -->
+                <details>
+                  <summary role="treeitem">
+                    <i class="fas fa-folder ft-icon ft-folder" aria-hidden="true"></i>
+                    .github/workflows/
+                  </summary>
+                  <div class="ft-children">
+                    <div class="ft-file">
+                      <i class="fas fa-file-code ft-icon" aria-hidden="true"></i>
+                      <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/.github/workflows/ci.yml" target="_blank" rel="noopener noreferrer">ci.yml</a>
+                      <span class="ft-comment"># GitHub Actions CI pipeline</span>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- Root files -->
+                <div class="ft-file">
+                  <i class="fab fa-docker ft-icon" style="color:#0db7ed" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/Dockerfile" target="_blank" rel="noopener noreferrer">Dockerfile</a>
+                  <span class="ft-comment"># Multi-stage build with baked weights</span>
+                </div>
+                <div class="ft-file">
+                  <i class="fab fa-docker ft-icon" style="color:#0db7ed" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/docker-compose.yml" target="_blank" rel="noopener noreferrer">docker-compose.yml</a>
+                  <span class="ft-comment"># Local deployment configuration</span>
+                </div>
+                <div class="ft-file">
+                  <i class="fab fa-python ft-icon" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/download_models.py" target="_blank" rel="noopener noreferrer">download_models.py</a>
+                  <span class="ft-comment"># Pre-downloads MarianMT weights at build time</span>
+                </div>
+                <div class="ft-file">
+                  <i class="fas fa-file-alt ft-icon" aria-hidden="true"></i>
+                  <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate/blob/main/requirements.txt" target="_blank" rel="noopener noreferrer">requirements.txt</a>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="content-block fade-up">
+              <h2>What I Learned</h2>
+              <p>
+                This project forced a different set of decisions to the network anomaly detector. There's no training
+                pipeline to build — the models are pre-trained transformers — so the engineering challenge shifts
+                entirely to serving infrastructure: how to load large models efficiently, how to handle concurrent
+                requests without blocking, and how to monitor quality continuously in production.
+              </p>
+              <p>
+                The safeguarding module was particularly instructive. Wrapping a transformer in a REST API means
+                exposing it to arbitrary user input, and the gap between "works in a notebook" and "safe to deploy"
+                is non-trivial. Validating inputs, detecting injection attempts, and checking outputs before they
+                reach the caller are production concerns that rarely appear in academic work but dominate real deployments.
+              </p>
+              <p>
+                Baking model weights into the Docker image at build time — rather than downloading at startup —
+                was a deliberate choice that makes deployments deterministic and eliminates a class of runtime
+                failures entirely. It's a pattern I'll carry forward.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Sidebar -->
+          <aside class="project-sidebar" aria-label="Project details">
+            <div class="sidebar-card">
+              <h3>Tech Stack</h3>
+              <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">FastAPI</span>
+                <span class="tag">Uvicorn</span>
+                <span class="tag">HuggingFace Transformers</span>
+                <span class="tag">MarianMT</span>
+                <span class="tag">Helsinki-NLP OPUS-MT</span>
+                <span class="tag">Pydantic v2</span>
+                <span class="tag">Prometheus</span>
+                <span class="tag">sacrebleu</span>
+                <span class="tag">Docker</span>
+                <span class="tag">Docker Compose</span>
+                <span class="tag">GitHub Actions</span>
+                <span class="tag">pytest</span>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Languages Supported</h3>
+              <ul class="dataset-list">
+                <li><span>French</span> <strong>Helsinki-NLP/opus-mt-en-fr</strong></li>
+                <li><span>German</span> <strong>Helsinki-NLP/opus-mt-en-de</strong></li>
+                <li><span>Spanish</span> <strong>Helsinki-NLP/opus-mt-en-es</strong></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Links</h3>
+              <div class="project-links">
+                <a href="https://github.com/StanSouthwick/Helsinki-NLP-Translate" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
+                  <i class="fab fa-github" aria-hidden="true"></i> View on GitHub
+                </a>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Status</h3>
+              <span class="badge badge-live">Live</span>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <p class="footer__copy">&copy; 2025 Stanley Southwick</p>
+      <div class="footer__socials">
+        <a href="https://github.com/StanSouthwick" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/stanley-southwick" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="mailto:stanjsouthwick@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-top" id="backTop" aria-label="Back to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+      document.getElementById('backTop').classList.toggle('visible', window.scrollY > 400);
+    });
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const fadeObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => fadeObs.observe(el));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => { mobileMenu.classList.add('open'); hamburger.setAttribute('aria-expanded','true'); });
+    function closeMobile() { mobileMenu.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); }
+    document.getElementById('mobileClose').addEventListener('click', closeMobile);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobile(); });
+    document.getElementById('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>
